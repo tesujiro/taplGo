@@ -16,12 +16,9 @@ type IfTerm struct {
 	Else Term
 }
 
-type SuccTerm struct {
-	Arg Term
-}
-
-type PredTerm struct {
-	Arg Term
+type NextNumTerm struct {
+	Arg  Term
+	Diff int
 }
 
 type IsZeroTerm struct {

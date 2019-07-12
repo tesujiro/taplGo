@@ -48,11 +48,11 @@ t
 	}
 	| SUCC t
 	{
-		$$ = &ast.SuccTerm{ Arg: $2 }
+		$$ = &ast.NextNumTerm{ Arg: $2, Diff: 1 }
 	}
 	| PRED t
 	{
-		$$ = &ast.PredTerm{ Arg: $2 }
+		$$ = &ast.NextNumTerm{ Arg: $2, Diff: -1 }
 	}
 	| ISZERO t
 	{

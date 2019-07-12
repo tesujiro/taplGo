@@ -483,13 +483,13 @@ yydefault:
 		yyDollar = yyS[yypt-2 : yypt+1]
 		//line ./parser/grammar.go.y:50
 		{
-			yyVAL.t = &ast.SuccTerm{Arg: yyDollar[2].t}
+			yyVAL.t = &ast.NextNumTerm{Arg: yyDollar[2].t, Diff: 1}
 		}
 	case 7:
 		yyDollar = yyS[yypt-2 : yypt+1]
 		//line ./parser/grammar.go.y:54
 		{
-			yyVAL.t = &ast.PredTerm{Arg: yyDollar[2].t}
+			yyVAL.t = &ast.NextNumTerm{Arg: yyDollar[2].t, Diff: -1}
 		}
 	case 8:
 		yyDollar = yyS[yypt-2 : yypt+1]

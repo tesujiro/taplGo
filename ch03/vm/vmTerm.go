@@ -31,12 +31,31 @@ func evalTerm(term ast.Term) (interface{}, error) {
 		} else {
 			return evalTerm(els)
 		}
-	case *ast.SuccTerm:
-	case *ast.PredTerm:
+	case *ast.NextNumTerm:
+		arg := term.(*ast.NextNumTerm).Arg
+		diff := term.(*ast.NextNumTerm).Diff
+		res, err := evalTerm(arg)
+		if err != nil {
+			return nil, fmt.Errorf("if condition error: %v", err)
+		}
+		if val, ok := res.(int); ok {
+			return val + diff, nil
+		} else {
+			return diff, nil
+		}
 	case *ast.IsZeroTerm:
+		arg := term.(*ast.IsZeroTerm).Arg
+		res, err := evalTerm(arg)
+		if err != nil {
+			return nil, fmt.Errorf("if condition error: %v", err)
+		}
+		if val, ok := res.(int); ok {
+			return val == 0, nil
+		} else {
+			return false, nil
+		}
 
 	default:
 		return nil, fmt.Errorf("invalid expression: %v", reflect.TypeOf(term))
 	}
-	return nil, nil
 }
