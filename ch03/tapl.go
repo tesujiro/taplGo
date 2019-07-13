@@ -14,6 +14,7 @@ import (
 
 var (
 	print_ast, no_exec, dbg bool
+	constsF, sizeF, depthF  bool
 )
 
 func main() {
@@ -40,7 +41,10 @@ func _main() int {
 	f := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	f.BoolVar(&print_ast, "a", false, "print AST")
 	f.BoolVar(&no_exec, "n", false, "no execution")
-	f.BoolVar(&dbg, "d", false, "debug option")
+	//f.BoolVar(&dbg, "d", false, "debug option")
+	f.BoolVar(&constsF, "c", false, "Consts function")
+	f.BoolVar(&sizeF, "s", false, "Size function")
+	f.BoolVar(&depthF, "d", false, "Deph function")
 
 	f.Parse(os.Args[1:])
 	args := f.Args()
@@ -80,17 +84,41 @@ func runScript(source string) int {
 	if print_ast {
 		parser.Dump(ast)
 	}
+
 	val, err := vm.Run(ast)
 	if err != nil {
-		fmt.Printf("Compile error: %v \n", err)
+		fmt.Printf("Runtime error: %v \n", err)
 		return 1
+	}
+	fmt.Printf("%v\n", val)
+
+	if constsF {
+		val, err := vm.Consts(ast)
+		if err != nil {
+			fmt.Printf("Function error: %v \n", err)
+		}
+		fmt.Printf("%v\n", val)
+	}
+
+	if sizeF {
+		val, err := vm.Size(ast)
+		if err != nil {
+			fmt.Printf("Function error: %v \n", err)
+		}
+		fmt.Printf("%v\n", val)
+	}
+
+	if depthF {
+		val, err := vm.Depth(ast)
+		if err != nil {
+			fmt.Printf("Function error: %v \n", err)
+		}
+		fmt.Printf("%v\n", val)
 	}
 
 	if no_exec {
 		return 0
 	}
-
-	fmt.Printf("%v\n", val)
 
 	return 0
 }
