@@ -97,7 +97,7 @@ func runScript(source string) int {
 		if err != nil {
 			fmt.Printf("Function error: %v \n", err)
 		}
-		fmt.Printf("%v\n", val)
+		fmt.Printf("Consts=>%v\n", val)
 	}
 
 	if sizeF {
@@ -105,7 +105,7 @@ func runScript(source string) int {
 		if err != nil {
 			fmt.Printf("Function error: %v \n", err)
 		}
-		fmt.Printf("%v\n", val)
+		fmt.Printf("Size=>%v\n", val)
 	}
 
 	if depthF {
@@ -113,7 +113,7 @@ func runScript(source string) int {
 		if err != nil {
 			fmt.Printf("Function error: %v \n", err)
 		}
-		fmt.Printf("%v\n", val)
+		fmt.Printf("Depth=>%v\n", val)
 	}
 
 	if no_exec {

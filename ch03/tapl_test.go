@@ -48,6 +48,34 @@ func TestTapl(t *testing.T) {
 		{script: "if iszero 0 then succ 0 else pred 0", ok: "1\n"},
 		{script: "if iszero succ 0 then succ 0 else pred 0", ok: "-1\n"},
 
+		// Consts function
+		{script: "0", options: []string{"-c"}, ok: "0\nConsts=>[0]\n"},
+		{script: "true", options: []string{"-c"}, ok: "true\nConsts=>[true]\n"},
+		{script: "false", options: []string{"-c"}, ok: "false\nConsts=>[false]\n"},
+		{script: "pred 0", options: []string{"-c"}, ok: "-1\nConsts=>[0]\n"},
+		{script: "succ 0", options: []string{"-c"}, ok: "1\nConsts=>[0]\n"},
+		{script: "iszero 0", options: []string{"-c"}, ok: "true\nConsts=>[0]\n"},
+		{script: "if iszero 0 then true else false", options: []string{"-c"}, ok: "true\nConsts=>[0 true false]\n"},
+		{script: "if iszero 0 then true else if iszero 0 then true else false", options: []string{"-c"}, ok: "true\nConsts=>[0 true false]\n"},
+
+		// Size function
+		{script: "0", options: []string{"-s"}, ok: "0\nSize=>1\n"},
+		{script: "true", options: []string{"-s"}, ok: "true\nSize=>1\n"},
+		{script: "false", options: []string{"-s"}, ok: "false\nSize=>1\n"},
+		{script: "pred 0", options: []string{"-s"}, ok: "-1\nSize=>2\n"},
+		{script: "succ 0", options: []string{"-s"}, ok: "1\nSize=>2\n"},
+		{script: "iszero 0", options: []string{"-s"}, ok: "true\nSize=>2\n"},
+		{script: "if iszero 0 then succ 0 else pred 0", options: []string{"-s"}, ok: "1\nSize=>6\n"},
+
+		// Depth function
+		{script: "0", options: []string{"-d"}, ok: "0\nDepth=>1\n"},
+		{script: "true", options: []string{"-d"}, ok: "true\nDepth=>1\n"},
+		{script: "false", options: []string{"-d"}, ok: "false\nDepth=>1\n"},
+		{script: "pred 0", options: []string{"-d"}, ok: "-1\nDepth=>2\n"},
+		{script: "succ 0", options: []string{"-d"}, ok: "1\nDepth=>2\n"},
+		{script: "iszero 0", options: []string{"-d"}, ok: "true\nDepth=>2\n"},
+		{script: "if iszero 0 then succ 0 else pred 0", options: []string{"-d"}, ok: "1\nDepth=>2\n"},
+
 		//OPTIONS
 		/*
 			{script: "1", options: []string{"-a"}, ok_regex: `ast.NumExpr{Literal:"1"}`},
