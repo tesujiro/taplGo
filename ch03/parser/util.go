@@ -44,9 +44,14 @@ func Dump(obj interface{}) {
 			for i := 0; i < v.NumField(); i++ {
 				pf(indent+"\t", t.Field(i).Name, v.Field(i).Interface())
 				//if !v.Elem().IsNil() {
-				if v.Field(i).Kind() != reflect.String &&
-					v.Field(i).Kind() != reflect.Struct &&
-					v.Field(i).Kind() != reflect.Bool &&
+				//chan, func, interface, map, pointer, or slice
+				if (v.Field(i).Kind() == reflect.Chan ||
+					v.Field(i).Kind() == reflect.Func ||
+					v.Field(i).Kind() == reflect.Interface ||
+					v.Field(i).Kind() == reflect.Func ||
+					v.Field(i).Kind() == reflect.Map ||
+					v.Field(i).Kind() == reflect.Ptr ||
+					v.Field(i).Kind() == reflect.Slice) &&
 					!v.Field(i).IsNil() {
 					dump_helper(next_indent, v.Field(i).Interface())
 				}

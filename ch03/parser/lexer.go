@@ -2,7 +2,6 @@
 package parser
 
 import (
-	"errors"
 	"fmt"
 	"unicode"
 
@@ -76,10 +75,8 @@ func (s *Scanner) Scan() (tok int, lit string, pos ast.Position, err error) {
 		}
 	case ch == '0':
 		tok = ZERO
-		lit, err = s.scanNumber()
-		if err != nil {
-			return
-		}
+		lit = "0"
+		s.next()
 	case ch == EOF:
 		if !EOF_FLAG {
 			tok = int(';')
@@ -108,27 +105,9 @@ func isDigit(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
 
-// isHex returns true if the rune is a hex digits.
-func isHex(ch rune) bool {
-	return ('0' <= ch && ch <= '9') || ('a' <= ch && ch <= 'f') || ('A' <= ch && ch <= 'F')
-}
-
-// isEOL returns true if the rune is at end-of-line or end-of-file.
-func isEOL(ch rune) bool {
-	return ch == '\n' || ch == -1
-}
-
 // isBlank returns true if the rune is empty character..
 func isBlank(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\r'
-}
-
-func appendNumberAndPoint(s *Scanner, ret []rune) []rune {
-	for isDigit(s.peek()) || s.peek() == '.' {
-		ret = append(ret, s.peek())
-		s.next()
-	}
-	return ret
 }
 
 // peek returns current rune in the code.
@@ -175,14 +154,6 @@ func (s *Scanner) pos() ast.Position {
 	return ast.Position{Line: s.line + 1, Column: s.offset - s.lineHead + 1}
 }
 
-// skipBlank moves position into non-black character.
-/*
-func (s *Scanner) skipBlank() {
-	for isBlank(s.peek()) {
-		s.next()
-	}
-}
-*/
 func (s *Scanner) skipBlank() string {
 	str := ""
 	for ch := s.peek(); isBlank(ch); ch = s.peek() {
@@ -201,98 +172,6 @@ func (s *Scanner) scanIdentifier() (string, error) {
 		}
 		ret = append(ret, s.peek())
 		s.next()
-	}
-	return string(ret), nil
-}
-
-// scanNumber returns number beginning at current position.
-func (s *Scanner) scanNumber() (string, error) {
-	var ret []rune
-	ch := s.peek()
-	ret = append(ret, ch)
-	s.next()
-	if ch == '0' && s.peek() == 'x' {
-		ret = append(ret, s.peek())
-		s.next()
-		for isHex(s.peek()) {
-			ret = append(ret, s.peek())
-			s.next()
-		}
-	} else {
-		ret = appendNumberAndPoint(s, ret)
-		if s.peek() == 'e' {
-			ret = append(ret, s.peek())
-			s.next()
-			if isDigit(s.peek()) || s.peek() == '+' || s.peek() == '-' {
-				ret = append(ret, s.peek())
-				s.next()
-				ret = appendNumberAndPoint(s, ret)
-			}
-			ret = appendNumberAndPoint(s, ret)
-		}
-		if isLetter(s.peek()) {
-			return "", errors.New("identifier starts immediately after numeric literal")
-		}
-	}
-	return string(ret), nil
-}
-
-// scanRawString returns raw-string starting at current position.
-func (s *Scanner) scanRawString(l rune) (string, error) {
-	var ret []rune
-	for {
-		s.next()
-		if s.peek() == EOF {
-			return "", errors.New("unexpected EOF")
-		}
-		if s.peek() == l {
-			s.next()
-			break
-		}
-		ret = append(ret, s.peek())
-	}
-	return string(ret), nil
-}
-
-// scanString returns string starting at current position.
-// This handles backslash escaping.
-func (s *Scanner) scanString(l rune) (string, error) {
-	var ret []rune
-eos:
-	for {
-		s.next()
-		switch s.peek() {
-		case EOL:
-			return "", errors.New("unexpected EOL")
-		case EOF:
-			return "", errors.New("unexpected EOF")
-		case l:
-			s.next()
-			break eos
-		case '\\':
-			s.next()
-			switch s.peek() {
-			case 'b':
-				ret = append(ret, '\b')
-				continue
-			case 'f':
-				ret = append(ret, '\f')
-				continue
-			case 'r':
-				ret = append(ret, '\r')
-				continue
-			case 'n':
-				ret = append(ret, '\n')
-				continue
-			case 't':
-				ret = append(ret, '\t')
-				continue
-			}
-			ret = append(ret, s.peek())
-			continue
-		default:
-			ret = append(ret, s.peek())
-		}
 	}
 	return string(ret), nil
 }
